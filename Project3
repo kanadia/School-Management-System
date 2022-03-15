@@ -1,0 +1,557 @@
+//Name: Vidhi Kanadia
+
+//package p3;
+import java.util.*;
+import java.io.*;
+import java.text.*;
+
+public class Project3 {
+
+	public static void main(String[] args) 
+	{
+		Scanner scan = new Scanner(System.in);
+
+		ArrayList <Person> arrList = new ArrayList <Person> ();
+		Person person;
+		int len = 0;
+		boolean temp = false, studentData = false, facultyData = false;
+		String choice, ID, tempStr, idStr = "", reportChoice = ""; 
+
+		System.out.println("\t\t\t  Welcome to my Personal Management Program\n");
+		System.out.println("\nChoose one of the options:");
+
+		do
+		{
+			System.out.println("1 - Add a new faculty member");
+			System.out.println("2 - Add a new student");
+			System.out.println("3 - Print tuition invoice for a student");
+			System.out.println("4 - Print faculty information");
+			System.out.println("5 - Exit Program");
+			System.out.print("\n\tEnter your selection: ");
+
+			choice = scan.nextLine();
+
+			switch(choice)
+			{
+			case "1": person = new Faculty();
+
+			System.out.println("\nEnter Faculty info here: \n");
+			System.out.print("\tName of Faculty: ");
+			person.setFullName(scan.nextLine());
+
+			try 
+			{
+				System.out.print("\tID: ");
+				idStr = "";
+				idStr = scan.nextLine();
+				
+				if(idStr.length() == 6)
+				{
+					if(!( (Character.isAlphabetic(idStr.charAt(0)) == true) && (Character.isAlphabetic(idStr.charAt(1)) == true) && (Character.isDigit(idStr.charAt(3)) == true) && (Character.isDigit(idStr.charAt(4)) == true) && (Character.isDigit(idStr.charAt(5)) == true)  ) )                          
+					{
+						System.out.println("ID invalid");
+						throw new InputMismatchException(); //throws exception when ID does not match the proper format
+					}
+					else //if ID matches the format, it continues with the program
+					{
+						person.setPersonID(idStr);
+						temp = false;
+
+						while(temp == false)
+						{
+							System.out.print("\tRank: ");
+							temp = ((Faculty)person).setRank(scan.nextLine());
+						}
+
+						temp = false;
+						while(temp == false)
+						{
+							System.out.print("\tDepartment: ");
+							temp = ((Faculty)person).setDepartment(scan.nextLine());
+						}
+
+						arrList.add(person);
+						facultyData = true;
+						len++;
+						
+						System.out.println("\n\nThanks!");
+					}
+				}
+				else throw new InputMismatchException();
+				
+			}
+			catch(InputMismatchException excpt)
+			{
+				System.out.println("Sorry invalid ID format - It has to be LetterLetterDigitDigitDigitDigit\n\n");
+			}
+
+			break;
+
+			case "2": person = new Students();
+
+			System.out.println("\nEnter Student Info here: \n");
+			System.out.print("\tName of Student: ");
+			person.setFullName(scan.nextLine()); 
+
+			try 
+			{
+				System.out.print("\tID: ");
+				idStr = "";
+				idStr = scan.nextLine();
+				
+				if(idStr.length() == 6)
+				{
+					if(!( (Character.isAlphabetic(idStr.charAt(0)) == true) && (Character.isAlphabetic(idStr.charAt(1)) == true) && (Character.isDigit(idStr.charAt(3)) == true) && (Character.isDigit(idStr.charAt(4)) == true) && (Character.isDigit(idStr.charAt(5)) == true)  ) )                          
+					{
+						System.out.println("ID invalid");
+						throw new InputMismatchException();
+					}
+					else 
+					{
+						person.setPersonID(idStr);
+						System.out.print("\tGPA: ");
+						tempStr = scan.nextLine();
+						((Students)person).setGPA(Double.parseDouble(tempStr));
+
+						System.out.print("\tCredit Hours: ");
+						tempStr = scan.nextLine();
+						((Students)person).setHours(Double.parseDouble(tempStr));
+
+						arrList.add(person); 
+						studentData = true;
+						System.out.println("\n\nThanks!\n");
+					}
+				}
+				else throw new InputMismatchException();
+			}
+			
+			catch (InputMismatchException excpt)
+			{
+				System.out.println("Sorry invalid ID format - It has to be LetterLetterDigitDigitDigitDigit\n\n");
+			}
+
+			break;
+
+			case "3": 
+				if(studentData == false) //If user has not entered Student Data and asks to print invoice
+				{
+					System.out.println("\nUh-oh...Please enter Student data first.\n\n");
+					break;
+				}
+
+				else
+				{
+					System.out.print("\n\tEnter the student's ID: ");
+
+					ID = scan.nextLine();
+					temp = false;
+
+					for(Person p : arrList)
+					{
+						if(p.getPersonID().equalsIgnoreCase(ID))
+						{
+							if(p.getClass().toString().equals("class p3.Students") == true) //to check if ID is from the Students class
+							{
+								temp = true;
+
+								System.out.println("\tHere is the tuition invoice for [" + ((Students)p).getFullName() + "]: ");
+								((Students)p).printTuition();
+								break;
+							}
+							else
+							{
+								System.out.println("\tNot a Student's ID...\n\n"); //ID exists but in a different class
+								temp = true;
+							}
+						}
+					}
+
+					if (temp == false) System.out.println("Sorry - student not found!\n\n");
+
+					break;
+				}
+
+
+			case "4": 
+				if(facultyData == false) //if user has not entered Faculty Data and asks to print Faculty Info
+				{
+					System.out.println("\nUh-oh...Please enter Faculty data first.\n\n");
+					break;
+				}
+
+				else
+				{
+					System.out.print("\n\tEnter the Faculty ID: ");
+
+					ID = scan.nextLine();
+					temp = false;
+
+					for(Person p : arrList)
+					{
+						if(p.getPersonID().equalsIgnoreCase(ID))
+						{
+							if(p.getClass().toString().equals("class p3.Faculty") == true) //to checkc if ID is from the Faculty class
+							{
+								temp = true;
+
+								System.out.println("\tFaculty Found: ");
+								((Faculty)p).printInfo();
+								break;
+							}
+							else 
+							{
+								System.out.println("\tNot a Faculty ID...\n\n"); //when ID exists but in a different class
+								temp = true;
+							}
+						}	
+					}
+
+					if(temp == false) System.out.println("\tSorry [" + ID + "] does not exist.\n\n	");
+
+					break;
+				}
+
+			case "5": System.out.print("\n\nWould you like to create the report? (Y/N): ");
+			reportChoice = scan.nextLine();
+			
+			if(reportChoice.equalsIgnoreCase("Y"))
+				createFile(arrList, len);
+
+			else if(reportChoice.equalsIgnoreCase("N"))
+			{
+				System.out.println("\n\nGoodbye!");
+				System.exit(0);
+			}
+			else System.out.println("Invalid entry - please press \"Y\" or \"N\" \n\n");
+			
+			break;
+
+			default: System.out.println("\nInvalid entry - Please try again: \n\n");
+			}
+
+		} while(!reportChoice.equalsIgnoreCase("Y"));
+
+		scan.close();
+	}
+	
+	public static void createFile(ArrayList <Person> arrList, int len)
+	{
+		try 
+		{
+			int i = 1, j = 0;
+			char [] array = new char[len];
+			
+			Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+			
+			File myFile = new File("report.dat");
+			FileWriter writer = new FileWriter(myFile);
+			
+			System.out.println("\nYour file has been created!\n\nGoodbye!");
+			
+			writer.write("Report Created on " + formatter.format(date));
+			writer.write("\n****************************");
+			writer.write("\n\n\nFaculty Members (Sorted by Department)\n");
+			writer.write("----------------------------------------\n");
+			
+			for(Person p : arrList)
+			{
+				if(p.getClass().toString().equals("class p3.Faculty"))
+				{
+					array[j] = ((Faculty)p).getDepartment().charAt(0); //stores the letter of each Department name in a char array to sort for later
+					j++;
+				}
+			}
+			
+			Arrays.sort(array); //sorts the char array in an alphabetic order
+			
+			for(int a = 0; a < j; a++)
+			{
+				if( a != 0 && array[a] == array[a - 1])	//if it's the same letter, it skips it over
+					continue;
+						
+				for(Person p : arrList)
+				{	
+					if(p.getClass().toString().equals("class p3.Faculty"))
+					{
+						if( ((Faculty)p).getDepartment().charAt(0) == array[a]  ) //prints the Faculty info to the file report.dat
+						{
+							writer.write(i + ". " + p.getFullName() + "\n");
+							writer.write("ID: " + p.getPersonID() + "\n");
+							writer.write(((Faculty)p).getRank() + ", " + ((Faculty)p).getDepartment() + "\n\n");	
+							i++;
+						}
+						
+						else continue;
+					}
+				}
+			}
+			
+			writer.write("\n\n\nStudents\n----------------------------------------\n");
+			
+			i = 1;
+			for(Person p : arrList)
+			{
+				if(p.getClass().toString().equals("class p3.Students")) //Makes sure to print only Student info and not Faculty info
+				{
+					writer.write(i + ". " + p.getFullName() + "\n");
+					writer.write("ID: " + p.getPersonID() + "\n");
+					writer.write("GPA: " + ((Students)p).getGPA() + "\n");
+					writer.write("Credit Hours: " + (int) ((Students)p).getHours() + "\n\n");
+					i++;
+				}
+				else continue;
+			}
+			
+			writer.close();	
+			
+		}
+		catch(IOException e)
+		{
+			System.out.println("An error occured..."); //If something goes wrong in the code, this message will be outputted
+		}
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------
+	//Parent Class: Person
+class Person 
+{
+	private String fullName;
+	private String personID;
+	int i = 1;
+
+	public Person(String fullName, String personID)
+	{
+		setFullName(fullName);
+		setPersonID(personID);
+	}
+
+	public Person()
+	{
+		fullName = personID = "";
+	}
+
+	public String getFullName()
+	{
+		return fullName;
+	}
+
+	public void setFullName(String fullName)
+	{
+		this.fullName = fullName;
+	}
+
+	public String getPersonID()
+	{
+		return personID;
+	}
+
+	public void setPersonID(String personID)
+	{
+		this.personID = personID;
+	}
+
+	public String toString()
+	{
+		return "[Name = " + fullName + "\t\tID = " + personID + "]";
+	}
+
+	public void printStudentInfo()
+	{
+		System.out.println("\n\t--------------------------------------------------------------------------------------------------------");
+		System.out.println("\t" + fullName + "\t\t\t" + personID);
+	}
+
+	public void printFacultyInfo()
+	{
+		System.out.println("\n\t--------------------------------------------------------------------------------------------------------");
+		System.out.println("\t" + fullName);
+	}
+	
+	public void printReport()
+	{
+		System.out.println(i + ". " + fullName);
+		System.out.println("ID: " + personID);
+	}
+}
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------
+	//Inheritance Class: Faculty
+class Faculty extends Person
+{
+	private String rank;
+	private String department;
+	private String [] rankList = {"Professor", "Adjunct"};
+	private String [] departmentList = {"Engineering", "Mathematics", "Physics"};
+
+	public Faculty()
+	{
+		super("No Name", "xxxxxxx");
+		rank = "No Rank";
+		department = "No ";
+	}
+
+	public Faculty(String name, String ID, String rank, String department)
+	{
+		super(name, ID);
+		this.rank = rank;
+		this.department = department;
+	}
+
+	public String getRank() 
+	{
+		return rank;
+	}
+
+	public boolean setRank(String rank) 
+	{
+		int i;
+		boolean temp = false; 
+
+		for(i = 0; i < rankList.length; i++)
+		{
+			if(rank.equalsIgnoreCase(this.rankList[i]))	
+				break;
+			else continue;
+		}
+
+		if(i >= rankList.length && rank != this.rankList[i-1])
+		{	
+			System.out.println("\tSorry entered rank [" + rank + "] is invalid.");
+			return temp;
+		}
+
+		this.rank = rank.toLowerCase();
+		this.rank = this.rank.substring(0, 1).toUpperCase()+ this.rank.substring(1);
+
+		return temp = true;
+	}
+
+	public String getDepartment() 
+	{
+		return department;
+	}
+
+	public boolean setDepartment(String department) 
+	{
+		int i;
+		boolean temp = false; 
+
+		for(i = 0; i < departmentList.length; i++)
+		{
+			if(department.equalsIgnoreCase(this.departmentList[i]))
+				break;
+			else continue;
+		}
+
+		if(i >= departmentList.length && department != this.departmentList[i-1])
+		{	
+			System.out.println("\tSorry entered department [" + department + "] is invalid.");
+			return temp;
+		}
+
+		this.department = department.toLowerCase();
+		this.department = this.department.substring(0, 1).toUpperCase() + this.department.substring(1);
+
+		return temp = true;
+	}
+
+	public int getListLength()
+	{
+		int num;
+		return num = rankList.length;
+	}
+	
+	public String toString() 
+	{
+
+		return super.toString() + "[Rank = " + rank + "\t\tDepartment = " + department + "]";
+	}
+
+	public void printInfo()
+	{
+		printFacultyInfo();
+		System.out.print("\n\t" + department + " Department,  ");
+		System.out.print(rank + "\n");	
+		System.out.println("\t--------------------------------------------------------------------------------------------------------");
+	}
+	
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------
+	//Inheritance Class: Students
+class Students extends Person
+{
+	private double hours;
+	private double GPA;
+	private double tuition = 0.00;
+	private double RatePerHour = 236.45;
+	private double discount = 0;
+	String str1, str2;
+	NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+
+
+	public Students()
+	{
+		super("No Name", "xxxxxxx");
+		hours = 0;
+		GPA = 0;
+	}
+
+	public Students(String name, String ID, double hours, double GPA)
+	{
+		super(name, ID);
+		this.hours = hours;
+		this.GPA = GPA;
+	}
+
+	public double getHours() {
+		return hours;
+	}
+
+	public void setHours(double hours) {
+		this.hours = hours;
+	}
+
+	public double getGPA() {
+		return GPA;
+	}
+
+	public void setGPA(double GPA) {
+		this.GPA = GPA;
+	}
+
+	public void calcTuition(double credHours, double gpa)
+	{
+		if(gpa >= 3.85)
+		{
+			tuition = 52 + (RatePerHour * credHours);
+			discount = tuition * 0.25;
+			tuition = tuition - discount;
+		}
+
+		else 
+		{
+			tuition = (RatePerHour * credHours) + 52;
+			discount = (int) discount;
+		}
+
+		str1 = format.format(tuition);
+		str2 = format.format(discount);
+	}
+	
+	public void printTuition()
+	{ 
+		calcTuition(hours, GPA);
+		printStudentInfo();
+		System.out.println("\n\tCredit Hours: " + (int) hours + "  ($" + RatePerHour + "/credit hour)");
+		System.out.println("\n\tFees: $52\n\n\n");
+		System.out.print("\tTotal Payment: " + str1 + "\t\t\t\t(" + str2 + ") discount applied\n");
+		System.out.println("\t--------------------------------------------------------------------------------------------------------");
+	}	
+}
